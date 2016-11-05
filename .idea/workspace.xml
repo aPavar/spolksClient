@@ -220,6 +220,7 @@
         <option value="$PROJECT_DIR$/src/com/company/Parser/Parser.java" />
         <option value="$PROJECT_DIR$/src/com/company/Controller/Controller.java" />
         <option value="$PROJECT_DIR$/src/com/company/Client/Client.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -954,12 +955,12 @@
       <workItem from="1477578377511" duration="4249000" />
       <workItem from="1477587871118" duration="3908000" />
       <workItem from="1478354876985" duration="1493000" />
-      <workItem from="1478356924667" duration="6793000" />
+      <workItem from="1478356924667" duration="9022000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="517288000" />
+    <option name="totallyTimeSpent" value="519517000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="24" width="1301" height="744" extended-state="6" />
