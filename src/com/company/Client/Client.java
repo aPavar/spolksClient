@@ -6,23 +6,17 @@ import com.company.File.File;
 import com.company.Handler.Handler;
 import com.company.Header.Header;
 import com.company.HeaderUdp.HeaderUdp;
-import com.company.HelperFindTimeout.HelperFindTimeout;
-import com.company.KitOfHeaders.KitOfHeaders;
 import com.company.NameCommand.NameCommand;
 import com.company.ParseConfigFile.ParseConfigFile;
 import com.company.Parser.Parser;
 import com.company.Separator.Separator;
-import com.company.SpecialData.SpecialData;
 import com.company.StructureOfReturnValue.StructureOfReturnValue;
 
 import java.io.*;
 import java.net.*;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channel;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by apava on 02.09.2016.
@@ -362,26 +356,6 @@ public class Client {
         return string.getBytes();
     }
 
-    public byte[] getMessage(byte[] arrayFrom, KitOfHeaders kitOfHeaders)
-    {
-        int sizeOfMessage=0;
-        int pos=0;
-        if(kitOfHeaders.getTypeHeader()==0){
-            sizeOfMessage=kitOfHeaders.getHeader().getSizeOfMessage();
-            pos=Header.sizeOfHeader;
-
-        }else{
-            if(kitOfHeaders.getTypeHeader()==1){
-                sizeOfMessage=kitOfHeaders.getSpecialData().getSizeOfMessage();
-                pos=SpecialData.size;
-            }else{
-                return null;
-            }
-        }
-        byte[] retArray=new byte[sizeOfMessage];
-        System.arraycopy(arrayFrom,pos,retArray,0,sizeOfMessage);
-        return retArray;
-    }
 
     public String getTime(DataOutputStream toServer, BufferedReader fromServer,Socket socket) throws IOException, ClassNotFoundException {
         Header header=new Header(CharacterTransferData.setConnection,NameCommand.getTime,0,Controller.sizeOfPackage,
@@ -462,7 +436,7 @@ public class Client {
         File file=new File(nameOfFile);
         int length=Controller.sizeOfPackage-HeaderUdp.getSizeOfHeaderUdp();
 
-        byte[] arrayToServer=new byte[Controller.sizeOfPackage-HeaderUdp.getSizeOfHeaderUdp()];
+        byte[] arrayReadFromFile=new byte[Controller.sizeOfPackage-HeaderUdp.getSizeOfHeaderUdp()];
         byte[] arrayFromServer=new byte[Controller.sizeOfPackage];
         long position=number*(Controller.sizeOfPackage-Header.sizeOfHeader);
 
@@ -484,8 +458,10 @@ public class Client {
         int count=countOfPackets(file.getSizeOfFile());
         int jo=number;
 
+        byte[] arrayToServer = new byte[Controller.sizeOfPackage];
         while(!structureOfReturnValue.isSignalOfEndFile()) {
-            structureOfReturnValue= file.readInfoFromFile(nameOfFile, length, position,arrayToServer);
+            structureOfReturnValue= file.readInfoFromFile(nameOfFile, length, position,arrayReadFromFile);
+
             for (int i = 0; i < listOfPackets.size(); i++) {
                 //    readPackage(arrayFromServer,fromServer);
 
@@ -493,7 +469,7 @@ public class Client {
                 dataGramSocket.send(datagramPacketSend);
                 dataGramSocket.receive(datagramPacketReceive);
                 handler.setNumberOfPackage(jo);
-                //
+
             }
             jo++;
             listOfPackets.clear();
