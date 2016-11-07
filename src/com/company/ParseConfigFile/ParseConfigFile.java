@@ -68,12 +68,12 @@ public class ParseConfigFile {
     public Socket newSocket() throws IOException {
         Socket socket=new Socket ();
         socket.setOOBInline(true);
-        socket.setKeepAlive(true);
+        //socket.setKeepAlive(true);
 
 
 
-        socket.setTrafficClass(10);
-        socket.connect(new InetSocketAddress(ip,port),5000);
+       // socket.setTrafficClass(10);
+        socket.connect(new InetSocketAddress(ip,port),3000);
         socket.setSoTimeout(tcpTimeOut);
         socket.setSendBufferSize(2*Controller.sizeOfPackage);
         socket.setReceiveBufferSize(2000*Controller.sizeOfPackage);

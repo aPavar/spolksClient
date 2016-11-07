@@ -20,6 +20,7 @@ import java.util.Scanner;
 
 public class  Controller {
     public static int sizeOfPackage=1024;
+    public static int sizeOfPackageUdp = 16384;
     public static int sizeOfSendBuffer;
     public static int sizeOfReceiveBuffer;
     public static String readCommand(){
