@@ -151,14 +151,35 @@ public class  Controller {
                                    }
 
                                }else {
-                                   System.out.println("Connection is closed. If you want exit-enter \"exit\" or \"Exit\" and press enter. " +
+                                   if(handler.isLoadUdp()){
+                                       System.out.println("Connection is closed, but your file is loadUdp. If you want to continue loadUdp," +
+                                               "enter something, else enter \"exit\" or \"Exit\"");
+                                       readingString =readCommand();
+                                       if (readingString.equals("Exit") || readingString.equals("exit")) {
+                                           System.out.println("Connection is closed. If you want exit-enter \"exit\" or \"Exit\" and press enter. " +
+                                                   "If you want to continue-enter something and press enter.");
+                                           if (readingString.equals("Exit") || readingString.equals("exit")) {
+                                               return;
+                                           }
+                                       } else {
+                                               System.out.println("Controller, 165 ");
+                                               isDownLoad=true;
+                                               break;
+                                           }
+
+
+
+                                   }else{
+
+                                         System.out.println("Connection is closed. If you want exit-enter \"exit\" or \"Exit\" and press enter. " +
                                            "If you want to continue-enter something and press enter.");
 
-                                   readingString = readCommand();
+                                             readingString = readCommand();
 
                                    //   Command command= parser.getCommandWithParameters(readingString);
-                                   if (readingString.equals("Exit") || readingString.equals("exit")) {
-                                       return;
+                                             if (readingString.equals("Exit") || readingString.equals("exit")) {
+                                              return;
+                                        }
                                    }
                                }
                            }
@@ -245,7 +266,7 @@ public class  Controller {
                             }else
                             {
                                 if(handler.isDownLoad()) {
-                                    System.out.println("Connection is closed, but your file is load. If you want to continue load, enter something." +
+                                    System.out.println("Connection is closed, but your file is Download. If you want to continue download, enter something." +
                                             " Else enter \"exit\" or \"Exit\"");
                                     readingString = readCommand();
                                     if (readingString.equals("Exit") || readingString.equals("exit")) {
@@ -263,14 +284,40 @@ public class  Controller {
                                     }
 
                                 }else {
-                                    System.out.println("Connection is closed. If you want exit-enter \"exit\" or \"Exit\" and press enter. " +
-                                            "If you want to continue-enter something and press enter.");
+                                    if(handler.isLoadUdp()){
 
-                                    readingString = readCommand();
 
-                                    //   Command command= parser.getCommandWithParameters(readingString);
-                                    if (readingString.equals("Exit") || readingString.equals("exit")) {
-                                        return;
+                                        System.out.println("Connection is closed, but your file is loadUdp. If you want to continue loadUdp, enter something."+
+                                                " Else enter \"exit\" or \"Exit\"");
+                                        readingString = readCommand();
+                                        if (readingString.equals("Exit") || readingString.equals("exit")) {
+                                            System.out.println("Connection is closed. If you want exit-enter \"exit\" or \"Exit\" and press enter. " +
+                                                    "If you want to continue-enter something and press enter.");
+                                            if (readingString.equals("Exit") || readingString.equals("exit")) {
+                                                return;
+                                            }
+                                        }else{
+                                            socket = parseConfigFile.newSocket();
+                                            toServer=new DataOutputStream(socket.getOutputStream());
+                                            fromServer=new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                                            client.loadFileUdp(handler.getNameOfFile(),toServer,handler.getNumberOfPackage(),handler);
+                                            break;
+                                        }
+
+
+
+
+
+                                    }else {
+                                        System.out.println("Connection is closed. If you want exit-enter \"exit\" or \"Exit\" and press enter. " +
+                                                "If you want to continue-enter something and press enter.");
+
+                                        readingString = readCommand();
+
+                                        //   Command command= parser.getCommandWithParameters(readingString);
+                                        if (readingString.equals("Exit") || readingString.equals("exit")) {
+                                            return;
+                                        }
                                     }
                                 }
                             }

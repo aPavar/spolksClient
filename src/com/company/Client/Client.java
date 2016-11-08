@@ -442,12 +442,17 @@ public class Client {
         File file=new File(nameOfFile);
         int length=Controller.sizeOfPackageUdp-HeaderUdp.getSizeOfHeaderUdp();
 
+        if(number < 50) {
+            number = 0;
+        }
+        else number -=50;
+
         byte[] arrayReadFromFile=new byte[Controller.sizeOfPackageUdp-HeaderUdp.getSizeOfHeaderUdp()];
         byte[] arrayFromServer=new byte[Controller.sizeOfPackageUdp];
-        long position=number*(Controller.sizeOfPackageUdp-Header.sizeOfHeader);
+        long position=number*length;
 
         createListPackets(nameOfFile.getBytes(),Controller.sizeOfPackageUdp,CharacterTransferData.setConnection,
-                NameCommand.loadFileUdp, countOfPacketsUdp(file.getSizeOfFile()),handler.getNumberOfPackage());
+                NameCommand.loadFileUdp, countOfPacketsUdp(file.getSizeOfFile()),number);
         sendPackage(listOfPackets.get(0),toServer);
 
         int countsOfPackets = 0;
@@ -459,56 +464,54 @@ public class Client {
      //   createListPackets(countsOfPacketsBytes, Controller.sizeOfPackage,CharacterTransferData.setConnection,
              //   NameCommand.loadFileUdp,,0);
 
-        DatagramSocket dataGramSocket=new DatagramSocket(24001);
-        dataGramSocket.setReceiveBufferSize(2000*Controller.sizeOfPackageUdp);
-        dataGramSocket.setSendBufferSize(2*Controller.sizeOfPackageUdp);
+       try( DatagramSocket dataGramSocket=new DatagramSocket(24001)) {
+           dataGramSocket.setReceiveBufferSize(2000 * Controller.sizeOfPackageUdp);
+           dataGramSocket.setSendBufferSize(2 * Controller.sizeOfPackageUdp);
 
 
-        dataGramSocket.setSoTimeout(22000);
-        InetAddress inetAddress= InetAddress.getByName(Controller.nameHost);
+           dataGramSocket.setSoTimeout(22000);
+           InetAddress inetAddress = InetAddress.getByName(Controller.nameHost);
 
-        DatagramPacket datagramPacketSend=new DatagramPacket(listOfPackets.get(0),listOfPackets.get(0).length,inetAddress,24001);
-      //  dataGramSocket.send(datagramPacketSend);
-        DatagramPacket datagramPacketReceive=new DatagramPacket(arrayFromServer,0,arrayFromServer.length);
-      //  dataGramSocket.receive(datagramPacketReceive);
+           DatagramPacket datagramPacketSend = new DatagramPacket(listOfPackets.get(0), listOfPackets.get(0).length, inetAddress, 24001);
+           //  dataGramSocket.send(datagramPacketSend);
+           DatagramPacket datagramPacketReceive = new DatagramPacket(arrayFromServer, 0, arrayFromServer.length);
+           //  dataGramSocket.receive(datagramPacketReceive);
 
-        StructureOfReturnValue structureOfReturnValue=new StructureOfReturnValue (false,0);
-
-
-        int jo=number;
-
-        byte[] arrayToServer = new byte[Controller.sizeOfPackageUdp];
-
-        while(!structureOfReturnValue.isSignalOfEndFile()) {
-            structureOfReturnValue= file.readInfoFromFile(nameOfFile, length, position,arrayReadFromFile);
-
-            if(!structureOfReturnValue.isSignalOfEndFile())
-            createListPacketsUdp(arrayReadFromFile, Controller.sizeOfPackageUdp, jo,
-                    -1);
-            else createListPacketsUdp(arrayReadFromFile, Controller.sizeOfPackageUdp, jo,
-                    structureOfReturnValue.getLengthOfReadCharacter());
+           StructureOfReturnValue structureOfReturnValue = new StructureOfReturnValue(false, 0);
 
 
+           int jo = number;
 
-            System.arraycopy(arrayFromServer,0,arrayToServer,HeaderUdp.getSizeOfHeaderUdp(),
-                        Controller.sizeOfPackageUdp-HeaderUdp.getSizeOfHeaderUdp());
+           byte[] arrayToServer = new byte[Controller.sizeOfPackageUdp];
 
-          //  System.arraycopy(HeaderUdp.headerUdpToArrayOfBytes(headerUdp),0,arrayToServer,
-             //       0, HeaderUdp.getSizeOfHeaderUdp());
+           while (!structureOfReturnValue.isSignalOfEndFile()) {
+               structureOfReturnValue = file.readInfoFromFile(nameOfFile, length, position, arrayReadFromFile);
+
+               if (!structureOfReturnValue.isSignalOfEndFile())
+                   createListPacketsUdp(arrayReadFromFile, Controller.sizeOfPackageUdp, jo,
+                           -1);
+               else createListPacketsUdp(arrayReadFromFile, Controller.sizeOfPackageUdp, jo,
+                       structureOfReturnValue.getLengthOfReadCharacter());
 
 
+               System.arraycopy(arrayFromServer, 0, arrayToServer, HeaderUdp.getSizeOfHeaderUdp(),
+                       Controller.sizeOfPackageUdp - HeaderUdp.getSizeOfHeaderUdp());
+
+               //  System.arraycopy(HeaderUdp.headerUdpToArrayOfBytes(headerUdp),0,arrayToServer,
+               //       0, HeaderUdp.getSizeOfHeaderUdp());
 
 
-                datagramPacketSend.setData(listOfPackets.get(0));
-                dataGramSocket.send(datagramPacketSend);
-                dataGramSocket.receive(datagramPacketReceive);
-                handler.setNumberOfPackage(jo);
-                System.out.println(jo);
+               datagramPacketSend.setData(listOfPackets.get(0));
+               dataGramSocket.send(datagramPacketSend);
+               dataGramSocket.receive(datagramPacketReceive);
+               handler.setNumberOfPackage(jo);
+               System.out.println(jo);
 
-            jo++;
-            listOfPackets.clear();
-            position+=length;
-        }
+               jo++;
+               listOfPackets.clear();
+               position += length;
+           }
+       }
         handler.setLoadUdp(false);
     }
 
