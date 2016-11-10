@@ -195,7 +195,9 @@ public class Client {
                 countOfPackets(file.getSizeOfFile()),number);
 
 
-        sendPackage(listOfPackets.get(0),toServer);
+       // sendPackage(listOfPackets.get(0),toServer);
+        socket.getOutputStream().write(listOfPackets.get(0));
+
      // int aaaaaa=  socket.getInputStream().read(arrayFromServer);
         listOfPackets.clear();
 
@@ -209,7 +211,13 @@ public class Client {
 
             for (byte[] listOfPacket : listOfPackets) {
 
-                sendPackage(listOfPacket, toServer);
+               // sendPackage(listOfPacket, toServer);
+                socket.getOutputStream().write(listOfPacket);
+                if(jo%15==0 && jo!=0||jo%10==0&& jo!=0) {
+                    //Thread.sleep(100);
+                    socket.sendUrgentData(161);
+               }
+            //    socket.sendUrgentData(1);
              //   aaaaaa=  socket.getInputStream().read(arrayFromServer);
                 separator.parce(listOfPacket);
                 System.out.println("numberOfPacket send "+ separator.getHeader().getNumberOfPacket());
